@@ -70,7 +70,7 @@ export default function Home() {
         {/* Logo */}
         <Box>
           <Image
-            src="https://cyber-system.vercel.app/img/cyber.png"
+            src="https://cyber-system-old.vercel.app/img/cyber.png"
             alt="logo"
             width={150}
             height={150}

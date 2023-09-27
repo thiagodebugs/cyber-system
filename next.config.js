@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "cyber-system.vercel.app",
+        hostname: "cyber-system-old.vercel.app",
         port: "",
         pathname: "/img/**",
       },
