@@ -15,6 +15,7 @@ import { useState } from "react";
 import Image from "next/image";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
+import logo from "@/images/logo_1080.png";
 
 export default function Home() {
   const [values, setValues] = useState({ email: "", password: "" });
@@ -60,21 +61,16 @@ export default function Home() {
       <Box
         sx={{
           width: "100%",
-          height: "95vh",
+          height: { xs: "90vh", md: "100vh" },
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-around",
+          justifyContent: "space-evenly",
           alignItems: "center",
         }}
       >
         {/* Logo */}
         <Box>
-          <Image
-            src="https://cyber-system-old.vercel.app/img/cyber.png"
-            alt="logo"
-            width={150}
-            height={150}
-          />
+          <Image src={logo} alt="logo" width={200} height={200} />
         </Box>
         {/* Form Login */}
         <Container
