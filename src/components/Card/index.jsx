@@ -3,7 +3,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { Button, CardActions } from "@mui/material";
+import { Avatar, Button, CardActions } from "@mui/material";
 
 export default function MyCard({ name, document, avatar_url }) {
   return (
@@ -14,15 +14,15 @@ export default function MyCard({ name, document, avatar_url }) {
         height: { xs: "150px" },
       }}
     >
-      <CardMedia
-        component="img"
-        sx={{ width: 100 }}
-        image={avatar_url}
-        alt="Foto de perfil"
+      <Avatar
+        variant="square"
+        sx={{ width: 100, height: "100%" }}
+        src={avatar_url}
+        component={CardMedia}
       />
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <CardContent sx={{ maxWidth: "300px" }}>
-          <Typography variant="h5" noWrap gutterBottom>
+          <Typography noWrap gutterBottom>
             {name}
           </Typography>
           <Typography color="text.secondary">{document}</Typography>
