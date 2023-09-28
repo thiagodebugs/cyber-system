@@ -8,6 +8,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function Home() {
   const [associates, setAssociates] = useState(null);
+  const [associatesDefault, setAssociatesDefault] = useState(null);
   const [loading, setLoading] = useState(true);
   const supabase = createClientComponentClient();
 
@@ -22,21 +23,23 @@ export default function Home() {
 
     if (data) {
       setAssociates(data);
+      setAssociatesDefault(data);
       setLoading(false);
     } else {
       setAssociates([]);
+      setAssociatesDefault([]);
       setLoading(false);
     }
   };
 
   const handleSearch = (event) => {
     const value = event.target.value.toLowerCase();
-    const filter = dataMock.filter((item) => {
+    const filter = associatesDefault.filter((item) => {
       return (
         item.name.toLowerCase().includes(value) || item.document.includes(value)
       );
     });
-    setData(filter);
+    setAssociates(filter);
   };
 
   return (
