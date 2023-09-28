@@ -15,8 +15,11 @@ const VisuallyHiddenInput = styled("input")({
   width: 128,
 });
 
-export default function AvatarUpload() {
-  const [avatarBlob, setAvatarBlob] = useState("");
+export default function AvatarUpload({
+  setAvatarFile,
+  avatarBlob,
+  setAvatarBlob,
+}) {
   return (
     <>
       <ButtonBase
@@ -59,6 +62,7 @@ export default function AvatarUpload() {
             const file = event.target.files[0];
             const blob = window.URL.createObjectURL(file);
             setAvatarBlob(blob);
+            setAvatarFile(file);
           }}
         />
       </ButtonBase>
