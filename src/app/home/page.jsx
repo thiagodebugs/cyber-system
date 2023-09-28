@@ -1,13 +1,28 @@
 "use client";
 
 import { Card, Navbar, Search } from "@/components";
-import { Box, Grid } from "@mui/material";
+import { Box, Fade, Grid, LinearProgress } from "@mui/material";
 
-import dataMock from "@/MOCK_DATA.json";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function Home() {
-  const [data, setData] = useState(dataMock);
+  const [associates, setAssociates] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const supabase = createClientComponentClient();
+
+  useEffect(() => {
+    featchData();
+  }, []);
+
+  const featchData = async () => {
+    const { data, error } = await supabase.from("associates").select();
+
+    if (error) throw error;
+
+    setAssociates(data);
+    setLoading(false);
+  };
 
   const handleSearch = (event) => {
     const value = event.target.value.toLowerCase();
@@ -21,17 +36,31 @@ export default function Home() {
 
   return (
     <>
+      <Box
+        sx={{
+          width: "100%",
+          height: "2px",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          zIndex: 2,
+        }}
+      >
+        <Fade in={loading}>
+          <LinearProgress />
+        </Fade>
+      </Box>
       <Navbar option="home">
         <Box sx={{ width: "100%", marginBottom: "15px" }}>
           <Search handleSearch={handleSearch} />
         </Box>
         <Grid container spacing={2}>
-          {data.map((item) => (
-            <Grid item xs={12} md={6} lg={4} key={item.id}>
+          {associates?.map((associate, index) => (
+            <Grid item xs={12} md={6} lg={4} key={index}>
               <Card
-                name={item.name}
-                document={item.document}
-                avatar_url={item.avatar_url}
+                name={associate.name}
+                document={associate.document}
+                avatar_url={associate.avatar_url}
               />
             </Grid>
           ))}
