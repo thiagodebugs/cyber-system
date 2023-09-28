@@ -20,8 +20,14 @@ export default function MyCard({ name, document, avatar_url }) {
         src={avatar_url}
         component={CardMedia}
       />
-      <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <CardContent sx={{ maxWidth: "300px" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          maxWidth: { xs: "200px", sm: "400px", md: "300px" },
+        }}
+      >
+        <CardContent>
           <Typography noWrap gutterBottom>
             {name}
           </Typography>
