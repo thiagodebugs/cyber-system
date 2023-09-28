@@ -10,37 +10,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useState } from "react";
 import Image from "next/image";
 import NextLink from "next/link";
-import { useRouter } from "next/navigation";
 import logo from "@/images/logo_1080.png";
 
 export default function Home() {
   const [values, setValues] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const supabase = createClientComponentClient();
-  const router = useRouter();
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: values.email,
-        password: values.password,
-      });
-
-      if (error) throw error;
-
-      router.push("/home");
-      setLoading(true);
-    } catch (error) {
-      alert(error.message);
-      setValues({ email: "", password: "" });
-      setLoading(false);
-    }
-  };
 
   return (
     <>
@@ -75,12 +52,14 @@ export default function Home() {
         {/* Form Login */}
         <Container
           component="form"
+          action="/auth/signin"
+          method="post"
           maxWidth="xs"
-          onSubmit={handleSubmit}
           sx={{ display: "flex", flexDirection: "column" }}
         >
           <TextField
             label="E-mail"
+            name="email"
             variant="outlined"
             fullWidth
             margin="normal"
@@ -93,6 +72,7 @@ export default function Home() {
           />
           <TextField
             label="Senha"
+            name="password"
             variant="outlined"
             fullWidth
             margin="normal"
@@ -108,6 +88,7 @@ export default function Home() {
             variant="contained"
             size="large"
             sx={{ mt: 3, mb: 2 }}
+            onClick={() => setLoading(true)}
           >
             Entrar
           </Button>
