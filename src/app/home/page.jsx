@@ -20,8 +20,13 @@ export default function Home() {
 
     if (error) throw error;
 
-    setAssociates(data);
-    setLoading(false);
+    if (data) {
+      setAssociates(data);
+      setLoading(false);
+    } else {
+      setAssociates([]);
+      setLoading(false);
+    }
   };
 
   const handleSearch = (event) => {
