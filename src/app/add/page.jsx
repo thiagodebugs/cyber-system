@@ -11,21 +11,61 @@ import {
   Box,
   TextField,
 } from "@mui/material";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useState } from "react";
 
 export default function Add() {
   const [values, setValues] = useState({ name: "", document: "" });
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarBlob, setAvatarBlob] = useState("");
+  const supabase = createClientComponentClient();
 
-  const handleChange = (event) => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value.toUpperCase(),
-    });
-  };
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("submit");
+
+    try {
+      const { data: newAssociate, error: errorInsertAssociate } = await supabase
+        .from("associates")
+        .insert({
+          name: values.name,
+          document: values.document,
+        })
+        .select()
+        .single();
+
+      if (errorInsertAssociate) throw errorInsertAssociate;
+
+      if (avatarFile) {
+        const { error: errorUploadAvatar } = await supabase.storage
+          .from("avatars")
+          .upload(`${newAssociate.id}`, avatarFile, {
+            upsert: true,
+          });
+
+        if (errorUploadAvatar) throw errorUploadAvatar;
+
+        const {
+          data: { publicUrl: avatarUrl },
+        } = supabase.storage.from("avatars").getPublicUrl(`${newAssociate.id}`);
+
+        const { error: errorUpdateAvatar } = await supabase
+          .from("associates")
+          .update({ avatar_url: avatarUrl })
+          .eq("id", newAssociate.id);
+
+        if (errorUpdateAvatar) throw errorUpdateAvatar;
+      }
+
+      alert("Associado adicionado com sucesso!");
+      setValues({ name: "", document: "" });
+      setAvatarFile(null);
+      setAvatarBlob("");
+    } catch (error) {
+      console.log(error);
+      alert(
+        `Ocorreu um erro durante a inserção do associado: ${error.message}`
+      );
+    }
   };
 
   return (
@@ -50,14 +90,23 @@ export default function Add() {
                 alignItems="center"
                 spacing={2}
               >
-                <AvatarUpload />
+                <AvatarUpload
+                  setAvatarFile={setAvatarFile}
+                  avatarBlob={avatarBlob}
+                  setAvatarBlob={setAvatarBlob}
+                />
                 <TextField
                   label="Nome"
                   name="name"
                   fullWidth
                   required
                   value={values.name}
-                  onChange={handleChange}
+                  onChange={(event) =>
+                    setValues({
+                      ...values,
+                      name: event.target.value.toUpperCase(),
+                    })
+                  }
                 />
                 <TextField
                   label="CPF"
@@ -65,7 +114,23 @@ export default function Add() {
                   fullWidth
                   required
                   value={values.document}
-                  onChange={handleChange}
+                  onChange={(event) =>
+                    //regex CPF 000.000.000-00
+                    {
+                      if (
+                        event.target.value.length <= 14 &&
+                        /^[0-9.-]*$/.test(event.target.value)
+                      ) {
+                        setValues({
+                          ...values,
+                          document: event.target.value.replace(
+                            /(\d{3})(\d{3})(\d{3})(\d{2})/,
+                            "$1.$2.$3-$4"
+                          ),
+                        });
+                      }
+                    }
+                  }
                 />
               </Stack>
               <Stack direction="row" spacing={2} justifyContent="flex-end">
